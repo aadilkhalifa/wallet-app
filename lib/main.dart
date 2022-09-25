@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'Models/Transactions_model.dart';
 import 'Pages/Automate_page.dart';
 import 'Pages/History_page.dart';
 import 'Pages/Home_page.dart';
@@ -74,7 +76,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: ChangeNotifierProvider(
+        create: (context) => TransactionsModel(),
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
