@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'Models/Transactions_model.dart';
 import 'Pages/Automate_page.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.robotoTextTheme(),
       ),
       home: const MyHomePage(title: 'Wallet'),
     );

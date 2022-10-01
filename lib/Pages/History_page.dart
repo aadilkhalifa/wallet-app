@@ -44,69 +44,7 @@ class _History_pageState extends State<History_page> {
                             // const New_transaction_page()),
                           );
                         },
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('Transaction id: '),
-                                    Text(transaction.id.toString()),
-                                  ],
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Amount: '),
-                                    Text(transaction.amount.toString()),
-                                  ],
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Recipient: '),
-                                    Text(transaction.to),
-                                  ],
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Debit or credit: '),
-                                    Text('Debit'),
-                                  ],
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Date and time: '),
-                                    Text(transaction.dateTime.toString()),
-                                  ],
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Category: '),
-                                    Text(transaction.category),
-                                  ],
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                ),
-                                // Text(transaction.id.toString()),
-                                // Text(transaction.amount.toString()),
-                                // Text(transaction.to.toString()),
-                                // Text(transaction.from.toString()),
-                                // Text(transaction.debit ? 'debit' : 'credit'),
-                                // Text(transaction.dateTime.toString()),
-                              ],
-                            ),
-                          ),
-                        ),
+                        child: TransactionCard(transaction),
                       );
                     }),
               ),
@@ -128,12 +66,88 @@ class _History_pageState extends State<History_page> {
                     // const New_transaction_page()),
                   );
                 },
-                child: Text('Add'),
+                child: const Text('Add'),
               ),
             ],
           ),
         );
       },
     );
+  }
+}
+
+class TransactionCard extends StatelessWidget {
+  Transaction transaction;
+
+  TransactionCard(this.transaction, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return (Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.swap_vertical_circle,
+                  size: 40,
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Payment to',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      transaction.to.length > 0 ? transaction.to : 'Unnamed',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Container(),
+                ),
+                Text(
+                  '₹${transaction.amount}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '2 days ago',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+                Text(
+                  transaction.category.toUpperCase(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 }
