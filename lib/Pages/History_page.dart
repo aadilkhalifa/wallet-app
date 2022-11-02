@@ -12,10 +12,10 @@ class History_page extends StatefulWidget {
   const History_page({Key? key}) : super(key: key);
 
   @override
-  State<History_page> createState() => _History_pageState();
+  State<History_page> createState() => _HistoryPageState();
 }
 
-class _History_pageState extends State<History_page> {
+class _HistoryPageState extends State<History_page> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TransactionsModel>(
@@ -50,7 +50,7 @@ class _History_pageState extends State<History_page> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(
+                  minimumSize: const Size.fromHeight(
                       40), // fromHeight use double.infinity as width and 40 is the height
                 ),
                 onPressed: () {
