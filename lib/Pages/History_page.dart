@@ -10,32 +10,37 @@ class History_page extends StatefulWidget {
   const History_page({Key? key}) : super(key: key);
 
   @override
-  State<History_page> createState() => _History_pageState();
+  State<History_page> createState() => _HistoryPageState();
 }
 
-class _History_pageState extends State<History_page> {
+class _HistoryPageState extends State<History_page> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<TransactionsModel>(
-      builder: (context, transactions, child) {
-        return ListView.builder(
-            itemCount: transactions.count,
-            itemBuilder: (BuildContext context, int index) {
-              Transaction transaction = transactions.atIndex(index);
-              return Card(
-                child: Column(
-                  children: [
-                    Text(transaction.id.toString()),
-                    Text(transaction.amount.toString()),
-                    Text(transaction.to.toString()),
-                    Text(transaction.from.toString()),
-                    Text(transaction.debitOrCredit.toString()),
-                    Text(transaction.dateTime.toString()),
-                  ],
-                ),
-              );
-            });
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('FloatingActionButton Sample'),
+      ),
+      body: Consumer<TransactionsModel>(
+        builder: (context, transactions, child) {
+          return ListView.builder(
+              itemCount: transactions.count,
+              itemBuilder: (BuildContext context, int index) {
+                Transaction transaction = transactions.atIndex(index);
+                return Card(
+                  child: Column(
+                    children: [
+                      Text(transaction.id.toString()),
+                      Text(transaction.amount.toString()),
+                      Text(transaction.to.toString()),
+                      Text(transaction.from.toString()),
+                      Text(transaction.debitOrCredit.toString()),
+                      Text(transaction.dateTime.toString()),
+                    ],
+                  ),
+                );
+              });
+        },
+      ),
     );
   }
 }
