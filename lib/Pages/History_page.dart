@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'package:wallet/Models/transactionAdapter.dart';
 import 'package:wallet/Pages/New_transaction_page.dart';
 import 'package:wallet/Pages/Transaction_details.page.dart';
 
@@ -16,8 +19,72 @@ class History_page extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<History_page> {
+  late final Box box;
+
+  @override
+  void initState() {
+    super.initState();
+    // WidgetsFlutterBinding.ensureInitialized();
+    // await Hive.initFlutter();
+    // Hive.registerAdapter(ItemAdapter());
+    box = Hive.box('transactions');
+    _openBox();
+  }
+
+  List<Box> itemsBox = [];
+  Future<List<Box>> _openBox() async {
+    print("reached open box");
+    box = await Hive.openBox('transactions');
+    return itemsBox;
+  }
+
+  @override
+  void dispose() {
+    // Closes all Hive boxes
+    Hive.close();
+    super.dispose();
+  }
+
+  final List<Transaction> _transactions = [
+    Transaction(0, 100, 'me', 'amul', true, DateTime.now(), 'food'),
+  ];
+  _addInfo(Item newItem) async {
+    // Add info to box
+    newItem.transid = box.length + 1;
+    box.add(newItem);
+    print(box.length);
+  }
+
+  _getInfo() {
+    // Get info from people box
+    Map<dynamic, dynamic> entireList = box.toMap();
+    print(entireList[0].transid);
+  }
+
+  _updateInfo(int transid, double amount, String recipent, String category) {
+    final trans = box.getAt(transid);
+    trans.amount = amount;
+    trans.to = recipent;
+    trans.category = category;
+    trans.save();
+    print("updated");
+    // Update info of people box
+  }
+
+  _deleteInfo(int transid) async {
+    // Delete info from people box
+    // box.deleteAt(transid);
+    // box.deleteAll(box.keys);
+    final itemToDelete =
+        await box.values.firstWhere((element) => element.transid == transid);
+    await itemToDelete.delete();
+    // box.keyAt(index)
+  }
+
   @override
   Widget build(BuildContext context) {
+    // box = Hive.box('transactions');r
+
     return Consumer<TransactionsModel>(
       builder: (context, transactions, child) {
         return Padding(
@@ -26,27 +93,36 @@ class _HistoryPageState extends State<History_page> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: ListView.builder(
-                    itemCount: transactions.count,
-                    itemBuilder: (BuildContext context, int index) {
-                      Transaction transaction = transactions.atIndex(index);
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChangeNotifierProvider<
-                                  TransactionsModel>.value(
-                                value: transactions,
-                                child: Transation_details_page(transaction),
-                              ),
-                            ),
-                            // const New_transaction_page()),
+                child: WatchBoxBuilder(
+                  box: Hive.box('transactions'),
+                  builder: ((context, box) {
+                    Map<dynamic, dynamic> raw = box.toMap();
+                    // print(raw[0].transid);
+                    List list = raw.values.toList();
+                    return ListView.builder(
+                        itemCount: list.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          Item transaction = list[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChangeNotifierProvider<
+                                      TransactionsModel>.value(
+                                    value: transactions,
+                                    child: Transation_details_page(
+                                        transaction, _updateInfo, _deleteInfo),
+                                  ),
+                                ),
+                                // const New_transaction_page()),
+                              );
+                            },
+                            child: TransactionCard(transaction),
                           );
-                        },
-                        child: TransactionCard(transaction),
-                      );
-                    }),
+                        });
+                  }),
+                ),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -60,7 +136,7 @@ class _HistoryPageState extends State<History_page> {
                       builder: (context) =>
                           ChangeNotifierProvider<TransactionsModel>.value(
                         value: transactions,
-                        child: New_transaction_page(),
+                        child: New_transaction_page(additionCallback: _addInfo),
                       ),
                     ),
                     // const New_transaction_page()),
@@ -77,7 +153,7 @@ class _HistoryPageState extends State<History_page> {
 }
 
 class TransactionCard extends StatelessWidget {
-  Transaction transaction;
+  Item transaction;
 
   TransactionCard(this.transaction, {Key? key}) : super(key: key);
 

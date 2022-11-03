@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
+import 'package:wallet/Models/transactionAdapter.dart';
 
 import '../Models/Transactions_model.dart';
 
 class Transation_details_page extends StatelessWidget {
-  Transation_details_page(this.transaction, {Key? key}) : super(key: key) {
+  Transation_details_page(
+      this.transaction, this.updateCallback, this.deleteCallback,
+      {Key? key})
+      : super(key: key) {
     amount = transaction.amount;
     recipient = transaction.to;
     category = transaction.category;
   }
-
-  Transaction transaction;
+  Function updateCallback;
+  Function deleteCallback;
+  Item transaction;
   double amount = 0;
   String recipient = "";
   String category = "";
@@ -77,7 +82,9 @@ class Transation_details_page extends StatelessWidget {
                           minimumSize: Size.fromHeight(40),
                         ),
                         onPressed: () {
-                          transactions.deleteTransactionWithId(transaction.id);
+                          deleteCallback(transaction.transid);
+                          // transactions
+                          //     .deleteTransactionWithId(transaction.transid);
                           Navigator.pop(context);
                         },
                         child: Text('Delete'),
@@ -92,18 +99,22 @@ class Transation_details_page extends StatelessWidget {
                           minimumSize: Size.fromHeight(40),
                         ),
                         onPressed: () {
-                          transactions.updateTransactionWithId(
-                            transaction.id,
-                            new Transaction(
-                              transaction.id,
-                              amount,
-                              transaction.from,
-                              recipient,
-                              transaction.debit,
-                              transaction.dateTime,
-                              category,
-                            ),
-                          );
+                          // final trans = box.getAt(transaction.transid)
+                          print(transaction.transid);
+                          updateCallback(transaction.transid - 1, amount,
+                              recipient, category);
+                          // transactions.updateTransactionWithId(
+                          //   transaction.transid,
+                          //   new Transaction(
+                          //     transaction.transid,
+                          //     amount,
+                          //     transaction.from,
+                          //     recipient,
+                          //     transaction.debit,
+                          //     transaction.dateTime,
+                          //     category,
+                          //   ),
+                          // );
                           Navigator.pop(context);
                         },
                         child: Text('Update'),

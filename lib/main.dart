@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:path_provider/path_provider.dart' as path_provider;
 import 'Models/Transactions_model.dart';
+import 'Models/transactionAdapter.dart';
 import 'Pages/Automate_page.dart';
 import 'Pages/History_page.dart';
 import 'Pages/Home_page.dart';
 import 'Pages/Track_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
+  Hive.registerAdapter(ItemAdapter());
+  await Hive.initFlutter(appDocumentDir.path);
+  await Hive.openBox('transactions');
   runApp(const MyApp());
 }
 
@@ -19,22 +27,36 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.robotoTextTheme(),
-      ),
-      home: const MyHomePage(title: 'Wallet'),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          textTheme: GoogleFonts.robotoTextTheme(),
+        ),
+        home: FutureBuilder(
+          future: Hive.openBox('transactions'),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                print("reached build");
+                return SafeArea(
+                    child: Text(
+                  "${snapshot.error}",
+                  style: TextStyle(fontSize: 20),
+                ));
+              } else {
+                return const MyHomePage(title: 'Wallet');
+              }
+            } else {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+          },
+        )
+        // child: ,
+        );
   }
 }
 
