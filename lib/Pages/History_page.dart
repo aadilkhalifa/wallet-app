@@ -19,7 +19,7 @@ class History_page extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<History_page> {
-  late final Box box;
+  late Box box;
 
   @override
   void initState() {
@@ -27,8 +27,8 @@ class _HistoryPageState extends State<History_page> {
     // WidgetsFlutterBinding.ensureInitialized();
     // await Hive.initFlutter();
     // Hive.registerAdapter(ItemAdapter());
-    box = Hive.box('transactions');
     _openBox();
+    // box = Hive.box('transactions');
   }
 
   List<Box> itemsBox = [];
@@ -41,7 +41,7 @@ class _HistoryPageState extends State<History_page> {
   @override
   void dispose() {
     // Closes all Hive boxes
-    Hive.close();
+    // Hive.close();
     super.dispose();
   }
 
@@ -83,7 +83,7 @@ class _HistoryPageState extends State<History_page> {
 
   @override
   Widget build(BuildContext context) {
-    // box = Hive.box('transactions');r
+    _openBox();
 
     return Consumer<TransactionsModel>(
       builder: (context, transactions, child) {
