@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:wallet/Pages/Automate_page.dart';
 import 'package:wallet/Pages/New_transaction_page.dart';
 import 'package:intl/intl.dart';
+import 'package:wallet/constants.dart';
 
 import '../Models/Transactions_model.dart';
 import '../Models/transactionAdapter.dart';
@@ -31,7 +32,8 @@ String getRecipient(String body) {
 
 class FetchPage extends StatefulWidget {
   List<String> seenHashes;
-  FetchPage(this.seenHashes, {Key? key}) : super(key: key);
+  List<Automation> automations;
+  FetchPage(this.seenHashes, this.automations, {Key? key}) : super(key: key);
 
   @override
   State<FetchPage> createState() => _FetchPageState();
@@ -113,8 +115,22 @@ class _FetchPageState extends State<FetchPage> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          ...allmessages.map(
-                            (msg) => Card(
+                          ...allmessages.map((msg) {
+                            double amount = getAmount(msg.body!);
+                            if (amount == -1) amount = 0;
+                            String recipient = getRecipient(msg.body!);
+                            if (recipient == "_") recipient = "";
+                            DateTime date = msg.date!;
+                            String category = categories[0];
+                            bool foundAutomation = false;
+                            var cur_automation = widget.automations
+                                .where((a) => a.recipient == recipient)
+                                .toList();
+                            if (cur_automation.length > 0) {
+                              category = cur_automation[0].category;
+                              foundAutomation = true;
+                            }
+                            return Card(
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: ExpansionTile(
@@ -125,8 +141,7 @@ class _FetchPageState extends State<FetchPage> {
                                       children: [
                                         Text('Parsed Amount: '),
                                         Text(
-                                          'Rs ' +
-                                              getAmount(msg.body!).toString(),
+                                          'Rs ' + amount.toString(),
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -143,7 +158,7 @@ class _FetchPageState extends State<FetchPage> {
                                         Text('Parsed Recipient: '),
                                         Flexible(
                                           child: Text(
-                                            getRecipient(msg.body!),
+                                            recipient,
                                             textAlign: TextAlign.right,
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -168,6 +183,24 @@ class _FetchPageState extends State<FetchPage> {
                                         ),
                                       ],
                                     ),
+                                    SizedBox(
+                                      height: 8.0,
+                                    ),
+                                    foundAutomation == false
+                                        ? Container()
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('Category automation: '),
+                                              Text(
+                                                category,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                     // Text(msg.body!),
                                   ]),
                                   children: [
@@ -197,15 +230,6 @@ class _FetchPageState extends State<FetchPage> {
                                         child: ElevatedButton(
                                             child: Text('Add transaction'),
                                             onPressed: () async {
-                                              double amount =
-                                                  getAmount(msg.body!);
-                                              if (amount == -1) amount = 0;
-                                              String recipient =
-                                                  getRecipient(msg.body!);
-                                              if (recipient == "_")
-                                                recipient = "";
-                                              DateTime date = msg.date!;
-
                                               var result = await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -231,8 +255,8 @@ class _FetchPageState extends State<FetchPage> {
                                   ],
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          }),
                         ],
                       ),
                     ),

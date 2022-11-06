@@ -6,8 +6,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:wallet/constants.dart';
 import 'Models/Transactions_model.dart';
 import 'Models/transactionAdapter.dart';
+import 'Pages/Add_automation_page.dart';
 import 'Pages/Automate_page.dart';
 import 'Pages/History_page.dart';
 import 'Pages/Home_page.dart';
@@ -85,6 +87,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
+  List<Automation> automations = [Automation('NIRMAL V NAIR', 'Others')];
 
   @override
   void initState() {
@@ -93,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> _widgetOptions = <Widget>[
     Home_page(),
-    Automate_page(),
+    Automate_page([]),
     Track_page(),
     History_page(),
   ];
@@ -122,8 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
                     child: Icon(Icons.add),
                   ),
-                  onTap: () {},
-                )
+                  onTap: navigateAndGetAutomation)
               : Container(),
         ],
       ),
@@ -133,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: _selectedIndex == 0
               ? _widgetOptions[0]
               : _selectedIndex == 1
-                  ? Automate_page()
+                  ? Automate_page(automations)
                   : _selectedIndex == 2
                       ? _widgetOptions[2]
                       : _widgetOptions[3]),
@@ -166,5 +168,14 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  Future<void> navigateAndGetAutomation() async {
+    var result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AddAutomationPage()));
+    if (result is Automation) {
+      automations.add(result);
+      setState(() {});
+    }
   }
 }
