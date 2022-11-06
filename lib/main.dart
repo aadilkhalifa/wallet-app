@@ -10,6 +10,8 @@ import 'Pages/Automate_page.dart';
 import 'Pages/History_page.dart';
 import 'Pages/Home_page.dart';
 import 'Pages/Track_page.dart';
+import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,9 +83,35 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
+  SmsQuery query = new SmsQuery();
+  List<SmsMessage> allmessages = [];
+
+  @override
+  void initState() {
+    takePermission();
+    super.initState();
+  }
+
+  void getAllMessages() {
+    Future.delayed(Duration.zero, () async {
+      List<SmsMessage> messages = await query.querySms(
+        //querySms is from sms package
+        // kinds: [SmsQueryKind.Inbox, SmsQueryKind.Sent, SmsQueryKind.Draft],
+        //filter Inbox, sent or draft messages
+        count: 10, //number of sms to read
+      );
+
+      setState(() {
+        //update UI
+        allmessages = messages;
+        print(messages);
+      });
+    });
+  }
+
+  List<Widget> _widgetOptions = <Widget>[
     Home_page(),
-    Automate_page(),
+    Automate_page([]),
     Track_page(),
     History_page(),
   ];
@@ -94,16 +122,40 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> takePermission() async {
+    if (await Permission.sms.request().isGranted) {
+      print('granted');
+      getAllMessages();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          _selectedIndex == 1
+              ? GestureDetector(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                    child: Icon(Icons.add),
+                  ),
+                  onTap: () {},
+                )
+              : Container(),
+        ],
       ),
       body: ChangeNotifierProvider(
-        create: (context) => TransactionsModel(),
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+          create: (context) => TransactionsModel(),
+          // child: _widgetOptions.elementAt(_selectedIndex),
+          child: _selectedIndex == 0
+              ? _widgetOptions[0]
+              : _selectedIndex == 1
+                  ? Automate_page(allmessages)
+                  : _selectedIndex == 2
+                      ? _widgetOptions[2]
+                      : _widgetOptions[3]),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
