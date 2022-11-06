@@ -10,9 +10,20 @@ import '../Models/Transactions_model.dart';
 import '../constants.dart';
 
 class New_transaction_page extends StatefulWidget {
-  New_transaction_page(
-      {Key? key, required this.additionCallback, required this.transactions})
-      : super(key: key);
+  double amount;
+  String recipient = "";
+  String category;
+  DateTime date;
+
+  New_transaction_page({
+    Key? key,
+    required this.additionCallback,
+    required this.transactions,
+    this.amount = 0,
+    this.recipient = "",
+    this.category = 'Food',
+    required this.date,
+  }) : super(key: key);
   Function additionCallback;
   TransactionsModel transactions;
 
@@ -27,10 +38,6 @@ class _New_transaction_pageState extends State<New_transaction_page> {
   //   Hive.registerAdapter(ItemAdapter());
   //   // box = Hive.box('transactions');
   // }
-
-  double amount = 0;
-  String recipient = "";
-  String category = categories[0];
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +55,23 @@ class _New_transaction_pageState extends State<New_transaction_page> {
                     child: Column(
               children: [
                 // Text('Amount'),
-                TextField(
+                TextFormField(
                   decoration:
                       new InputDecoration(labelText: "Enter the amount"),
                   keyboardType: TextInputType.number,
+                  initialValue: widget.amount.toString(),
                   onChanged: (text) {
-                    amount = double.parse(text);
+                    widget.amount = double.parse(text);
                   },
                 ),
 
-                TextField(
+                TextFormField(
                   decoration:
                       new InputDecoration(labelText: "Enter the recipient"),
                   keyboardType: TextInputType.text,
+                  initialValue: widget.recipient,
                   onChanged: (text) {
-                    recipient = text;
+                    widget.recipient = text;
                   },
                 ),
                 // TextField(
@@ -80,7 +89,7 @@ class _New_transaction_pageState extends State<New_transaction_page> {
                       width: 20,
                     ),
                     OutlinedButton(
-                      child: Text(category),
+                      child: Text(widget.category),
                       onPressed: () {
                         _navigateAndDisplaySelection(context);
                         // Navigator.push(
@@ -103,20 +112,20 @@ class _New_transaction_pageState extends State<New_transaction_page> {
                 minimumSize: Size.fromHeight(40),
               ),
               onPressed: () {
-                var newItem = new Transaction(
-                    1, amount, 'me', recipient, true, DateTime.now(), '');
+                var newItem = new Transaction(1, widget.amount, 'me',
+                    widget.recipient, true, DateTime.now(), '');
                 var newItem2 = new Item(
                   transid: 1,
-                  amount: amount,
+                  amount: widget.amount,
                   from: 'me',
-                  to: recipient,
+                  to: widget.recipient,
                   debit: true,
                   dateTime: DateTime.now(),
-                  category: category,
+                  category: widget.category,
                 );
                 widget.additionCallback(newItem2);
                 widget.transactions.add(newItem);
-                Navigator.pop(context);
+                Navigator.pop(context, 'success');
               },
               child: Text('Done'),
             ),
@@ -133,7 +142,7 @@ class _New_transaction_pageState extends State<New_transaction_page> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SelectCategory(category)),
+      MaterialPageRoute(builder: (context) => SelectCategory(widget.category)),
     );
 
     // When a BuildContext is used from a StatefulWidget, the mounted property
@@ -141,7 +150,7 @@ class _New_transaction_pageState extends State<New_transaction_page> {
     if (!mounted) return;
 
     setState(() {
-      category = result;
+      widget.category = result;
     });
 
     // After the Selection Screen returns a result, hide any previous snackbars

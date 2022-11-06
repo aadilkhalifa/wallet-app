@@ -137,8 +137,10 @@ class _HistoryPageState extends State<History_page> {
                           ChangeNotifierProvider<TransactionsModel>.value(
                         value: transactions,
                         child: New_transaction_page(
-                            additionCallback: _addInfo,
-                            transactions: transactions),
+                          additionCallback: _addInfo,
+                          transactions: transactions,
+                          date: DateTime.now(),
+                        ),
                       ),
                     ),
                     // const New_transaction_page()),

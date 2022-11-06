@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -10,6 +12,7 @@ import 'package:wallet/Pages/Fetch_page.dart';
 import 'package:wallet/Pages/New_transaction_page.dart';
 
 import '../Models/Transactions_model.dart';
+import 'package:crypto/crypto.dart';
 
 class Automate_page extends StatefulWidget {
   Automate_page({Key? key}) : super(key: key);
@@ -18,7 +21,13 @@ class Automate_page extends StatefulWidget {
   State<Automate_page> createState() => _Automate_pageState();
 }
 
+String encodeString(String input) {
+  return sha256.convert(utf8.encode(input)).toString();
+}
+
 class _Automate_pageState extends State<Automate_page> {
+  List<String> seenHashes = [];
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TransactionsModel>(builder: (context, transactions, child) {
@@ -29,9 +38,7 @@ class _Automate_pageState extends State<Automate_page> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: [
-                    // ...widget.allmessages.map((msg) => Text(msg.body!)),
-                  ],
+                  children: [Text('No automations yet.')],
                 ),
               ),
             ),
@@ -52,7 +59,7 @@ class _Automate_pageState extends State<Automate_page> {
                       builder: (context) =>
                           ChangeNotifierProvider<TransactionsModel>.value(
                         value: transactions,
-                        child: FetchPage(),
+                        child: FetchPage(seenHashes),
                       ),
                     ),
                     // const New_transaction_page()),

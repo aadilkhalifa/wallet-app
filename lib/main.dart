@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Color(0xFFADAAEA),
+            primary: Color.fromARGB(255, 107, 100, 237),
             secondary: Color(0xFFAA4AE4),
           ),
           textTheme: GoogleFonts.robotoTextTheme(),
