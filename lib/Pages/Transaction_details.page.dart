@@ -163,7 +163,7 @@ class _Transation_details_pageState extends State<Transation_details_page> {
                           // final trans = box.getAt(transaction.transid)
                           print(widget.transaction.transid);
                           widget.updateCallback(
-                              widget.transaction.transid - 1,
+                              widget.transaction.transid,
                               widget.amount,
                               widget.recipient,
                               widget.category,

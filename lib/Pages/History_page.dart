@@ -65,7 +65,9 @@ class _HistoryPageState extends State<History_page> {
 
   _updateInfo(int transid, double amount, String recipent, String category,
       DateTime date) {
-    final trans = box.getAt(transid - 1);
+    // final trans = box.getAt(transid);
+    final trans =
+        box.values.firstWhere((element) => element.transid == transid);
     trans.amount = amount;
     trans.to = recipent;
     trans.category = category;
