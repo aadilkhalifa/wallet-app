@@ -87,6 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
     Track_page(),
     History_page(),
   ];
+  @override
+  void dispose() {
+    // Closes all Hive boxes
+    Hive.close();
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
