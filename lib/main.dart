@@ -29,7 +29,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: Color(0xFFADAAEA),
+            secondary: Color(0xFFAA4AE4),
+          ),
           textTheme: GoogleFonts.robotoTextTheme(),
         ),
         home: FutureBuilder(
