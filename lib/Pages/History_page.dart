@@ -4,6 +4,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:wallet/Models/transactionAdapter.dart';
 import 'package:wallet/Pages/New_transaction_page.dart';
@@ -46,11 +47,12 @@ class _HistoryPageState extends State<History_page> {
   }
 
   final List<Transaction> _transactions = [
-    Transaction(0, 100, 'me', 'amul', true, DateTime.now(), 'food'),
+    Transaction(1, 100, 'me', 'amul', true, DateTime.now(), 'food'),
   ];
+  int next = 2;
   _addInfo(Item newItem) async {
     // Add info to box
-    newItem.transid = box.length + 1;
+    newItem.transid = next++;
     box.add(newItem);
     print(box.length);
   }
@@ -61,11 +63,13 @@ class _HistoryPageState extends State<History_page> {
     print(entireList[0].transid);
   }
 
-  _updateInfo(int transid, double amount, String recipent, String category) {
-    final trans = box.getAt(transid);
+  _updateInfo(int transid, double amount, String recipent, String category,
+      DateTime date) {
+    final trans = box.getAt(transid - 1);
     trans.amount = amount;
     trans.to = recipent;
     trans.category = category;
+    trans.dateTime = date;
     trans.save();
     print("updated");
     // Update info of people box
@@ -182,7 +186,7 @@ class TransactionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Payment to',
+                      'Payment to' + transaction.transid.toString(),
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -215,7 +219,7 @@ class TransactionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '2 days ago',
+                  DateFormat("MMM d yyyy").format(transaction.dateTime),
                   style: TextStyle(
                     color: Colors.grey[600],
                   ),

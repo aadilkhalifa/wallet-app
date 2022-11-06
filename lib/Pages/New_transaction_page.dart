@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:wallet/Models/transactionAdapter.dart';
 import 'package:wallet/Pages/Select_category.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import '../Models/Transactions_model.dart';
 import '../constants.dart';
@@ -74,14 +76,6 @@ class _New_transaction_pageState extends State<New_transaction_page> {
                     widget.recipient = text;
                   },
                 ),
-                // TextField(
-                //   decoration:
-                //       new InputDecoration(labelText: "Enter the category"),
-                //   keyboardType: TextInputType.text,
-                //   onChanged: (text) {
-                //     category = text;
-                //   },
-                // ),
                 Row(
                   children: [
                     Text('Category'),
@@ -92,21 +86,41 @@ class _New_transaction_pageState extends State<New_transaction_page> {
                       child: Text(widget.category),
                       onPressed: () {
                         _navigateAndDisplaySelection(context);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => SelectCategory(),
-                        //   ),
-                        // );
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text('Date time'),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    OutlinedButton(
+                      child: Text(DateFormat("MMM d yyyy").format(widget.date)),
+                      onPressed: () {
+                        DatePicker.showDatePicker(
+                          context,
+                          showTitleActions: true,
+                          minTime: DateTime(2018, 3, 5),
+                          maxTime: DateTime.now(),
+                          onChanged: (date) {
+                            // print('change $date');
+                          },
+                          onConfirm: (date) {
+                            // print('confirm $date');
+                            widget.date = date;
+                            setState(() {});
+                          },
+                          currentTime: DateTime.now(),
+                          locale: LocaleType.en,
+                        );
                       },
                     ),
                   ],
                 ),
               ],
             ))),
-            // Consumer<TransactionsModel>(
-            //   builder: (context, transactions, child) {
-            // return ElevatedButton(
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: Size.fromHeight(40),

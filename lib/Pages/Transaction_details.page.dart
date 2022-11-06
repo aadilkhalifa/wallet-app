@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:wallet/Models/transactionAdapter.dart';
 import 'package:wallet/Pages/Select_category.dart';
@@ -15,6 +17,7 @@ class Transation_details_page extends StatefulWidget {
     amount = transaction.amount;
     recipient = transaction.to;
     category = transaction.category;
+    date = transaction.dateTime;
   }
   Function updateCallback;
   Function deleteCallback;
@@ -22,6 +25,7 @@ class Transation_details_page extends StatefulWidget {
   double amount = 0;
   String recipient = "";
   String category = "defult";
+  DateTime date = DateTime.now();
 
   @override
   State<Transation_details_page> createState() =>
@@ -95,6 +99,36 @@ class _Transation_details_pageState extends State<Transation_details_page> {
                         ),
                       ],
                     ),
+                    Row(
+                      children: [
+                        Text('Date time'),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        OutlinedButton(
+                          child: Text(
+                              DateFormat("MMM d yyyy").format(widget.date)),
+                          onPressed: () {
+                            DatePicker.showDatePicker(
+                              context,
+                              showTitleActions: true,
+                              minTime: DateTime(2018, 3, 5),
+                              maxTime: DateTime.now(),
+                              onChanged: (date) {
+                                // print('change $date');
+                              },
+                              onConfirm: (date) {
+                                // print('confirm $date');
+                                widget.date = date;
+                                setState(() {});
+                              },
+                              currentTime: DateTime.now(),
+                              locale: LocaleType.en,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -128,8 +162,12 @@ class _Transation_details_pageState extends State<Transation_details_page> {
                         onPressed: () {
                           // final trans = box.getAt(transaction.transid)
                           print(widget.transaction.transid);
-                          widget.updateCallback(widget.transaction.transid - 1,
-                              widget.amount, widget.recipient, widget.category);
+                          widget.updateCallback(
+                              widget.transaction.transid - 1,
+                              widget.amount,
+                              widget.recipient,
+                              widget.category,
+                              widget.date);
                           // transactions.updateTransactionWithId(
                           //   transaction.transid,
                           //   new Transaction(
