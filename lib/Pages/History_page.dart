@@ -136,7 +136,9 @@ class _HistoryPageState extends State<History_page> {
                       builder: (context) =>
                           ChangeNotifierProvider<TransactionsModel>.value(
                         value: transactions,
-                        child: New_transaction_page(additionCallback: _addInfo),
+                        child: New_transaction_page(
+                            additionCallback: _addInfo,
+                            transactions: transactions),
                       ),
                     ),
                     // const New_transaction_page()),
