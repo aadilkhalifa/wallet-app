@@ -34,7 +34,6 @@ class _HistoryPageState extends State<History_page> {
 
   List<Box> itemsBox = [];
   Future<List<Box>> _openBox() async {
-    print("reached open box");
     box = await Hive.openBox('transactions');
     return itemsBox;
   }

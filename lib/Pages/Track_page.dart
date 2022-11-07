@@ -126,7 +126,7 @@ class _Track_pageState extends State<Track_page> {
   Widget build(BuildContext context) {
     // _openBox();
     // print(box.length);
-    print(chart1);
+    // print(chart1);
     return SafeArea(
       child: SingleChildScrollView(
         child: Center(
@@ -135,6 +135,7 @@ class _Track_pageState extends State<Track_page> {
               builder: ((context, box) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(
                       height: 50,
