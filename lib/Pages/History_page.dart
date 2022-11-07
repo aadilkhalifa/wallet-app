@@ -29,7 +29,7 @@ class _HistoryPageState extends State<History_page> {
     // await Hive.initFlutter();
     // Hive.registerAdapter(ItemAdapter());
     _openBox();
-    // box = Hive.box('transactions');
+    box = Hive.box('transactions');
   }
 
   List<Box> itemsBox = [];
